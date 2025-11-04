@@ -7,6 +7,8 @@
 
 </div>
 
+- This project is our implementation of programming language ParaCL from C++ cource by K.I.Vladimirov.
+
 ## Description of the grammar
 
 Below is a description of the grammar of the language in a format close to EBNF [2], which was updated before the addition of the new syntax of the language:
