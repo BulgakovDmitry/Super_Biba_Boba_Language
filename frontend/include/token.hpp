@@ -8,6 +8,7 @@ namespace language {
 
 struct Token {
     Type type_{Type::type_zero};
+    virtual ~Token() = default;
 };
 
 struct Token_binary_operator : public Token {
@@ -30,14 +31,6 @@ struct Token_variable : public Token {
     std::string variable_name{};
     number_type variable_value{nil};
 };
-
-
-
-
-
-
-
-
 
 } // namespace language
 
