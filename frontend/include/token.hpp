@@ -12,6 +12,11 @@ struct Token {
 
 struct Token_binary_operator : public Token {
     Binary_operators binary_operator_{Binary_operators::operator_zero};
+    
+    Token_binary_operator()
+        : Token(Type::type_operation)  
+        , binary_operator_(Binary_operators::operator_zero) {}
+
 };
 
 struct Token_unary_operator : public Token {

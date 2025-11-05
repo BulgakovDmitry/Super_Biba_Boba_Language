@@ -26,7 +26,7 @@ public:
     std::unique_ptr<Node> right_{nullptr};
 
     Statement_node () = default;
-    Statement_node (std::unique_ptr<Node>&& left, std::unique_ptr<Node>&& right) : left_(left), right_(right) {}
+    // Statement_node (std::unique_ptr<Node>&& left, std::unique_ptr<Node>&& right) : left_(left), right_(right) {}
 };
 
 class Number_node : public Node, public Token_number {

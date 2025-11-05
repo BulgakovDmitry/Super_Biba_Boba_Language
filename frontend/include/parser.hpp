@@ -19,24 +19,24 @@ public:
     bool parse(const std::vector<std::unique_ptr<Token>>& tokens_);
 
 private:
-    Node* get_operator() {
+    // Node* get_operator() {
 
-    }
+    // }
 
 };
 
-inline bool Parser::parse(const std::vector<std::unique_ptr<Token>> &tokens_) {
-    auto node = new Statement_node{get_operator(), new Statement_node};
+// inline bool Parser::parse(const std::vector<std::unique_ptr<Token>> &tokens_) {
+//     auto node = new Statement_node{get_operator(), new Statement_node};
 
-    auto current_node = node->right_;
+//     auto current_node = node->right_;
 
-    while (true) {
+//     while (true) {
 
 
-    }
+//     }
 
-    return node;
-}
+//     return node;
+// }
 
 } // namespace language
 
