@@ -9,7 +9,7 @@ namespace language {
 
 constexpr std::size_t n_lexems = 256;
 
-enum : uint8_t { KNone = 0, KBinop = 1, KIdent = 2 };
+enum : uint8_t { KNone = 0, KBinop = 1, KIdent = 2, KNum = 3 };
 
 struct Lexem {
     uint8_t lexem_type{KNone};
@@ -31,6 +31,18 @@ inline constexpr std::array<Lexem, n_lexems> lexem_table = []{
     a[static_cast<unsigned char>(')')] = {KIdent, static_cast<uint8_t>(Identifiers::id_right_parenthesis)};
     a[static_cast<unsigned char>('{')] = {KIdent, static_cast<uint8_t>(Identifiers::id_left_curly_bracket)};
     a[static_cast<unsigned char>('}')] = {KIdent, static_cast<uint8_t>(Identifiers::id_right_curly_bracket)};
+
+    a[static_cast<unsigned char>('0')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('1')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('2')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('3')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('4')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('5')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('6')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('7')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('8')] = {KNum, static_cast<uint8_t>(0)};
+    a[static_cast<unsigned char>('9')] = {KNum, static_cast<uint8_t>(0)};
+
 
     return a;
 }();

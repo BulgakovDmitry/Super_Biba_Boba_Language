@@ -17,9 +17,8 @@ private:
     std::vector<std::unique_ptr<Token>> tokens_{};
     std::string source_{};
     std::size_t i_{0};
-
+    std::size_t source_size_{0};
 public:
-
     explicit Lexer(const std::string& filename) {
         std::ifstream file(filename);
         if (!file.is_open()) {
@@ -29,9 +28,10 @@ public:
             (std::istreambuf_iterator<char>(file)),
             std::istreambuf_iterator<char>()
         );
+        source_size_ = source_.size();
     }
 
-    explicit Lexer(std::string&& source) : source_(std::move(source)) {}
+    explicit Lexer(std::string&& source) : source_{std::move(source)}, source_size_{source_.size()} {}
 
     Lexer(const Lexer&) = delete;
     Lexer& operator=(const Lexer&) = delete;
@@ -60,7 +60,7 @@ private:
 
     void skip_spaces();
     
-    void check_primitive_tokens();
+    void find_tokens();
 };
 
 /*—————————————————————————————————————————————————————————————————————————————————————————————————————————————————*/
@@ -93,9 +93,9 @@ inline void Lexer::skip_spaces() {
     }
 }
 
-inline void Lexer::check_primitive_tokens() {
+inline void Lexer::find_tokens() {
     skip_spaces();
-    const char c = source_[i_];
+    char c = source_[i_];
     
     Lexem lexem = lexem_table[c];
     switch (lexem.lexem_type) {
@@ -109,6 +109,14 @@ inline void Lexer::check_primitive_tokens() {
             static_cast<Identifiers>(lexem.lexem_value), i_);
         break;
     }
+    case KNum: {
+        number_type num = static_cast<number_type>(c) - static_cast<number_type>(48);
+        while (i_ < source_size_ && lexem_table[c = source_[++i_]].lexem_type == KNum) {
+            num *= 10;
+            num += static_cast<number_type>(c) - static_cast<number_type>(48);
+        }
+        tokens_.push_back(std::make_unique<Token_number>(num));
+    }
     default:
         break; 
     }
@@ -116,11 +124,8 @@ inline void Lexer::check_primitive_tokens() {
 
 
 inline void Lexer::tokenize() {
-    const std::size_t n = source_.size();
-    std::cout << "n = " << n << '\n'; // FIXME debug cout
-
-    while(i_ < n) {
-        check_primitive_tokens();
+    while(i_ < source_size_) {
+        find_tokens();
         //TODO check not primitive_tokens;
 
     }
