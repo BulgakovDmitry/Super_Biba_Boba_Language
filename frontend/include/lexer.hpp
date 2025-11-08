@@ -1,135 +1,161 @@
 #ifndef FRONTEND_INCLUDE_LEXER_HPP
 #define FRONTEND_INCLUDE_LEXER_HPP
 
-#include <vector>
-#include <memory>
-#include <string>
-#include "token.hpp"
-#include "common.hpp"
-#include "lexem_table.hpp"
-#include <fstream>
+#ifndef yyFlexLexer
+#include <FlexLexer.h>
+#endif
 #include <iostream>
 
 namespace language {
 
-class Lexer {
-private:
-    std::vector<std::unique_ptr<Token>> tokens_{};
-    std::string source_{};
-    std::size_t i_{0};
-    std::size_t source_size_{0};
+class Lexer : public yyFlexLexer {
+    std::string current_lexem;
+    std::string current_value;
+
+    int process_if() {
+        current_lexem = "conditional operator";
+        current_value = "if";
+        return 1;
+    }
+
+    int process_else() {
+        current_lexem = "conditional operator";
+        current_value = "else";
+        return 1;
+    }
+
+    int process_while() {
+        current_lexem = "conditional operator";
+        current_value = "while";
+        return 1;
+    }
+
+    int process_print() {
+        current_lexem = "operator";
+        current_value = "print";
+        return 1;
+    }
+
+    int process_input() {
+        current_lexem = "operator";
+        current_value = "?";
+        return 1;
+    }
+
+    int process_plus() {
+        current_lexem = "binary operator";
+        current_value = "+";
+        return 1;
+    }
+
+    int process_minus() {
+        current_lexem = "binary operator";
+        current_value = "-";
+        return 1;
+    }
+
+    int process_mul() {
+        current_lexem = "binary operator";
+        current_value = "*";
+        return 1;
+    }
+
+    int process_div()  {
+        current_lexem = "binary operator";
+        current_value = "/";
+        return 1;
+    }
+
+    int process_assign() {
+        current_lexem = "binary operator";
+        current_value = "=";
+        return 1;
+    }
+
+    int process_eq()  {
+        current_lexem = "comparing operator";
+        current_value = "==";
+        return 1;
+    }
+
+    int process_not_eq()  {
+        current_lexem = "comparing operator";
+        current_value = "!=";
+        return 1;
+    }
+
+    int process_less()  {
+        current_lexem = "comparing operator";
+        current_value = "<";
+        return 1;
+    }
+
+    int process_greater() {
+        current_lexem = "comparing operator";
+        current_value = ">";
+        return 1;
+    }
+
+    int process_less_or_eq() {
+        current_lexem = "comparing operator";
+        current_value = "<=";
+        return 1;
+    }
+
+    int process_greater_or_eq() {
+        current_lexem = "comparing operator";
+        current_value = ">=";
+        return 1;
+    }
+
+    int process_left_paren() {
+        current_lexem = "identifier";
+        current_value = "(";
+        return 1;
+    }
+
+    int process_right_paren() {
+        current_lexem = "identifier";
+        current_value = ")";
+        return 1;
+    }
+
+    int process_left_brace() {
+        current_lexem = "identifier";
+        current_value = "{";
+        return 1;
+    }
+
+    int process_right_brace() {
+        current_lexem = "identifier";
+        current_value = "}";
+        return 1;
+    }
+
+    int process_semicolon() {
+        current_lexem = "identifier";
+        current_value = ";";
+        return 1;
+    }
+
+    int process_id() {
+        current_lexem = "variable";
+        current_value = yytext;
+        return 1;
+    }
+
+    int process_number() {
+        current_lexem = "number";
+        current_value = yytext;
+        return 1;
+    }
+
 public:
-    explicit Lexer(const std::string& filename) {
-        std::ifstream file(filename);
-        if (!file.is_open()) {
-            throw std::runtime_error("Cannot open file: " + filename);
-        }
-        source_ = std::string(
-            (std::istreambuf_iterator<char>(file)),
-            std::istreambuf_iterator<char>()
-        );
-        source_size_ = source_.size();
-    }
-
-    explicit Lexer(std::string&& source) : source_{std::move(source)}, source_size_{source_.size()} {}
-
-    Lexer(const Lexer&) = delete;
-    Lexer& operator=(const Lexer&) = delete;
-
-    Lexer(Lexer&&) noexcept = default;
-    Lexer& operator=(Lexer&&) noexcept = default;
-
-    ~Lexer() = default;
-
-    [[nodiscard]] const std::vector<std::unique_ptr<Token>>& 
-    get_tokens() const noexcept { return tokens_; }
-
-    void print_source() const {              //NOTE for debug
-        std::cout << source_ << std::endl;
-    }
-
-    void print_tokens() const  {             //NOTE for debug
-        for (std::size_t i = 0; i < tokens_.size(); ++i) {
-            std::cout << static_cast<std::size_t>(tokens_[i].get()->type_) << '\n';
-        }
-    }
-
-    void tokenize();
- 
-private:
-
-    void skip_spaces();
-    
-    void find_tokens();
+  int yylex() override;
+  void print_current() const {
+    std::cout << current_lexem << " <" << current_value << ">" << std::endl;
+  }
 };
-
-/*—————————————————————————————————————————————————————————————————————————————————————————————————————————————————*/
-/*                                                                                                                 */
-/*——————————————————————————————————————————| implementation of functions |————————————————————————————————————————*/
-/*                                                                                                                 */
-/*—————————————————————————————————————————————————————————————————————————————————————————————————————————————————*/
-
-template<class Tok, class Enum>
-void emit_(std::vector<std::unique_ptr<Token>>& tokens, Enum e, size_t& i) {
-    tokens.push_back(std::make_unique<Tok>(e));
-    ++i;
-}
-
-
-/*—————————————————————————————————————————————————————————————————————————————————————————————————————————————————*/
-/*                                                                                                                 */
-/*——————————————————————————————————————————| implementation of methods |——————————————————————————————————————————*/
-/*                                                                                                                 */
-/*—————————————————————————————————————————————————————————————————————————————————————————————————————————————————*/
-
-inline void Lexer::skip_spaces() {
-    while (i_ < source_.size()) {
-        char c = source_[i_];
-        if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
-            ++i_;
-        } else {
-            break;
-        }
-    }
-}
-
-inline void Lexer::find_tokens() {
-    skip_spaces();
-    char c = source_[i_];
-    
-    Lexem lexem = lexem_table[c];
-    switch (lexem.lexem_type) {
-    case KBinop: {
-        emit_<Token_binary_operator>(tokens_,
-            static_cast<Binary_operators>(lexem.lexem_value), i_);
-        break;
-    }
-    case KIdent: {
-        emit_<Token_identifier>(tokens_,
-            static_cast<Identifiers>(lexem.lexem_value), i_);
-        break;
-    }
-    case KNum: {
-        number_type num = static_cast<number_type>(c) - static_cast<number_type>(48);
-        while (i_ < source_size_ && lexem_table[c = source_[++i_]].lexem_type == KNum) {
-            num *= 10;
-            num += static_cast<number_type>(c) - static_cast<number_type>(48);
-        }
-        tokens_.push_back(std::make_unique<Token_number>(num));
-    }
-    default:
-        break; 
-    }
-}
-
-
-inline void Lexer::tokenize() {
-    while(i_ < source_size_) {
-        find_tokens();
-        //TODO check not primitive_tokens;
-
-    }
-}
 
 } // namespace language
 
