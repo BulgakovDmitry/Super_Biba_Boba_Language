@@ -1,16 +1,18 @@
 %language "c++"
-%defines
+%defines "parser.hpp"
 %locations
+%define parse.error detailed
+%define api.value.type variant
+
 %nonassoc PREC_IFX
 %nonassoc TOK_ELSE
-%define api.value.type variant
-%define parse.error verbose
 
 %lex-param   { language::Lexer* scanner }
 %parse-param { language::Lexer* scanner }
 
 %code requires {
   #include <string>
+  #include "tokens.hpp"
   namespace language { class Lexer; }
 }
 
@@ -19,14 +21,15 @@
   #include <iostream>
 }
 
-%token TOK_IF TOK_ELSE TOK_WHILE TOK_PRINT TOK_INPUT
-%token TOK_PLUS TOK_MINUS TOK_MUL TOK_DIV
-%token TOK_ASSIGN
-%token TOK_EQ TOK_NEQ TOK_LESS TOK_GREATER TOK_LESS_OR_EQ TOK_GREATER_OR_EQ
-%token TOK_LEFT_PAREN TOK_RIGHT_PAREN TOK_LEFT_BRACE TOK_RIGHT_BRACE TOK_SEMICOLON
-%token <std::string> TOK_ID
-%token <int>         TOK_NUMBER
-%token TOK_EOF 0      
+/* Tokens */
+%token TOK_IF "if" TOK_ELSE "else" TOK_WHILE "while" TOK_PRINT "print" TOK_INPUT "?"
+%token TOK_PLUS "+" TOK_MINUS "-" TOK_MUL "*" TOK_DIV "/"
+%token TOK_ASSIGN "="
+%token TOK_EQ "==" TOK_NEQ "!=" TOK_LESS "<" TOK_GREATER ">" TOK_LESS_OR_EQ "<=" TOK_GREATER_OR_EQ ">="
+%token TOK_LEFT_PAREN "(" TOK_RIGHT_PAREN ")" TOK_LEFT_BRACE "{" TOK_RIGHT_BRACE "}" TOK_SEMICOLON ";"
+%token <std::string> TOK_ID "identifier"
+%token <int> TOK_NUMBER "number"
+%token TOK_EOF 0    
 
 %start program
 
@@ -93,6 +96,7 @@ primary        : TOK_NUMBER
                ;
 %%
 
-void yy::parser::error(const yy::parser::location_type& l, const std::string& m) {
-  std::cerr << "Syntax error: " << m << " at " << l << "\n";
+void yy::parser::error(const location& l, const std::string& m) {
+    std::cerr << "Syntax error at line " << l.begin.line
+              << ", column " << l.begin.column << ": " << m << "\n";
 }

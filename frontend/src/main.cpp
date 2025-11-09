@@ -1,15 +1,18 @@
 #include <memory>
 #include <fstream>
 #include <iostream>
-#include "parser.hpp"
 #include "lexer.hpp"
+#include "bridge.hpp"
 
-int main(int argc, char** argv) {  
+int yyFlexLexer::yywrap() { return 1; }
+
+int main() {
     language::Lexer scanner(&std::cin, &std::cout);
-
-    yy::parser parser(&scanner);
-
-    int rc = parser.parse();
-    if (rc == 0) std::cout << "Parse OK\n";
-    return rc;
+    while (true) {
+        int tok = scanner.yylex();
+        if (tok == 0) { std::cout << "EOF\n"; break; }
+        if (tok < 0) { std::cerr << "Lex error\n"; return 1; }
+        scanner.print_current();
+    }
+    return 0;
 }
