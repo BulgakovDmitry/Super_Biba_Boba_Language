@@ -1,14 +1,15 @@
 #include <memory>
-#include <FlexLexer.h>
+#include <fstream>
+#include <iostream>
+#include "parser.hpp"
 #include "lexer.hpp"
 
-int yyFlexLexer::yywrap() { return 1; }
+int main(int argc, char** argv) {  
+    language::Lexer scanner(&std::cin, &std::cout);
 
-using namespace language;
+    yy::parser parser(&scanner);
 
-int main() {
-  auto lexer = std::make_unique<Lexer>();
-  while (lexer->yylex() != 0) {
-    lexer->print_current();
-  }
+    int rc = parser.parse();
+    if (rc == 0) std::cout << "Parse OK\n";
+    return rc;
 }

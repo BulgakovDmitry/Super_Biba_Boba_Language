@@ -1,0 +1,6 @@
+snd = 1;
+if (snd != 2) {
+    snd = 2;
+} else {
+    snd = 0;
+}
