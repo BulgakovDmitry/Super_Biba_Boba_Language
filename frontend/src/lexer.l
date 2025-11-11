@@ -5,9 +5,9 @@
 %{
   #include <string>
   #include <iostream>
-  // #include "parser.hpp"  
-  #include "lexer.hpp"  
-  
+  // #include "parser.hpp"
+  #include "lexer.hpp"
+
   int yylineno;
 
   // #undef YY_DECL
@@ -32,7 +32,7 @@ NEWLINE  \n
 {LINE_COMMENT}  { /* skip */ }
 {BLOCK_COMMENT} { /* skip */ }
 
-"if"            { return process_if();   } 
+"if"            { return process_if();   }
 "else"          { return process_else(); }
 "while"         { return process_while(); }
 "print"         { return process_print(); }
