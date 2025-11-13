@@ -1,9 +1,9 @@
 #include "lexer.hpp"
+#include "node.hpp"
 #include "parser.hpp"
 #include <fstream>
 #include <iostream>
 #include <memory>
-#include "node.hpp"
 
 int yyFlexLexer::yywrap() { return 1; }
 
