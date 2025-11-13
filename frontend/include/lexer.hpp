@@ -73,7 +73,7 @@ public:
     int process_assign() {
         current_lexem = "binary operator";
         current_value = "=";
-        return yy::parser::token::TOK_ASSIGN; //yy::parser::token::::TOK_ASSIGN);
+        return yy::parser::token::TOK_ASSIGN; 
     }
 
     int process_eq()  {
