@@ -15,8 +15,7 @@ class Statement;
 class Expression;
 class Program;
 class Assignment;
-class BinaryOp;
-class UnaryOp;
+class Unary;
 class Number;
 class Variable;
 
@@ -48,11 +47,10 @@ using StmtList = std::vector<Statement_ptr>;
 using Expression_ptr = std::unique_ptr<Expression>;
 
 class Program : public Node {
-  private:
-    StmtList stmts;
-
   public:
-    explicit Program(StmtList s) : stmts(std::move(s)) {}
+    StmtList statements;
+
+    explicit Program(StmtList s) : statements(std::move(s)) {}
 };
 
 class Assignment : public Statement {
@@ -65,6 +63,12 @@ class Assignment : public Statement {
         : var_name_(std::move(var_name)), value_(std::move(value)) {}
 
     void accept(ASTVisitor &visitor) override { visitor.visit(*this); }
+};
+
+class Print_stmt : public Statement {
+private:
+    Expression_ptr value_;
+
 };
 
 class Number : public RValueExpr {

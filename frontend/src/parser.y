@@ -73,10 +73,11 @@
 program        : stmt_list ;
 
 stmt_list      : /* empty */
-               | stmt_list stmt
+               | stmt_list statement
                ;
 
-stmt           : assignment TOK_SEMICOLON
+statement      : assignment TOK_SEMICOLON
+               | input TOK_SEMICOLON
                | if_stmt
                | while_stmt
                | print_stmt TOK_SEMICOLON
@@ -85,14 +86,17 @@ stmt           : assignment TOK_SEMICOLON
 
 block          : TOK_LEFT_BRACE stmt_list TOK_RIGHT_BRACE ;
 
-assignment     : TOK_ID TOK_ASSIGN expr ;
-
-if_stmt
-               : TOK_IF TOK_LEFT_PAREN expr TOK_RIGHT_PAREN stmt %prec PREC_IFX
-               | TOK_IF TOK_LEFT_PAREN expr TOK_RIGHT_PAREN stmt TOK_ELSE stmt
+assignment     : TOK_ID TOK_ASSIGN expr 
                ;
- 
-while_stmt     : TOK_WHILE TOK_LEFT_PAREN expr TOK_RIGHT_PAREN stmt ;
+
+input          : TOK_ID TOK_ASSIGN TOK_INPUT
+               ;
+
+if_stmt        : TOK_IF TOK_LEFT_PAREN expr TOK_RIGHT_PAREN statement %prec PREC_IFX
+               | TOK_IF TOK_LEFT_PAREN expr TOK_RIGHT_PAREN statement TOK_ELSE statement
+               ;
+
+while_stmt     : TOK_WHILE TOK_LEFT_PAREN expr TOK_RIGHT_PAREN statement ;
 
 print_stmt     : TOK_PRINT expr ;
 
@@ -103,21 +107,21 @@ equality       : relational
                | equality TOK_NEQ relational
                ;
 
-relational     : additive
-               | relational TOK_LESS          additive
-               | relational TOK_LESS_OR_EQ    additive
-               | relational TOK_GREATER       additive
-               | relational TOK_GREATER_OR_EQ additive
+relational     : add_sub
+               | relational TOK_LESS          add_sub
+               | relational TOK_LESS_OR_EQ    add_sub
+               | relational TOK_GREATER       add_sub
+               | relational TOK_GREATER_OR_EQ add_sub
                ;
 
-additive       : multiplicative
-               | additive TOK_PLUS  multiplicative
-               | additive TOK_MINUS multiplicative
+add_sub        : mul_div
+               | add_sub TOK_PLUS  mul_div
+               | add_sub TOK_MINUS mul_div
                ;
 
-multiplicative : unary
-               | multiplicative TOK_MUL unary
-               | multiplicative TOK_DIV unary
+mul_div        : unary
+               | mul_div TOK_MUL unary
+               | mul_div TOK_DIV unary
                ;
 
 unary          : TOK_MINUS unary
@@ -127,7 +131,6 @@ unary          : TOK_MINUS unary
 primary        : TOK_NUMBER
                | TOK_ID
                | TOK_LEFT_PAREN expr TOK_RIGHT_PAREN
-               | TOK_INPUT             
                ;
 %%
 
