@@ -37,7 +37,7 @@ class Node {
     virtual void accept(ASTVisitor &visitor) = 0;
 };
 
-class Statement : public Node {};
+class Statement  : public Node {};
 class Expression : public Node {};
 class LValueExpr : public Expression {};
 class RValueExpr : public Expression {};
@@ -47,10 +47,11 @@ using StmtList = std::vector<Statement_ptr>;
 using Expression_ptr = std::unique_ptr<Expression>;
 
 class Program : public Node {
-  public:
-    StmtList statements;
+  private:
+    StmtList stmts_;
 
-    explicit Program(StmtList s) : statements(std::move(s)) {}
+  public:
+    explicit Program(StmtList stmts) : stmts_(std::move(stmts)) {}
 };
 
 class Assignment : public Statement {
