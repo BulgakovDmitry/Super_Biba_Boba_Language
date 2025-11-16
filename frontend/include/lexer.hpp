@@ -12,9 +12,17 @@
 namespace language {
 
 class Lexer : public yyFlexLexer {
-  public:
+private:
+    yy::parser::semantic_type* yylval = nullptr;
+    std::istream* input_stream;
+
+public:
     std::string current_lexem;
     std::string current_value;
+
+    Lexer(std::istream* in) : yyFlexLexer(in), input_stream(in) {}
+
+    int yylex() override;
 
     int process_if() {
         current_lexem = "conditional operator";
@@ -145,18 +153,20 @@ class Lexer : public yyFlexLexer {
     int process_id() {
         current_lexem = "variable";
         current_value = yytext;
+        if (yylval)
+            yylval->emplace<std::string>(yytext);
+
         return yy::parser::token::TOK_ID;
     }
 
     int process_number() {
         current_lexem = "number";
         current_value = yytext;
+        if (yylval)
+            yylval->emplace<int>(std::stoi(yytext));
+
         return yy::parser::token::TOK_NUMBER;
     }
-
-    using yyFlexLexer::yyFlexLexer;
-
-    int yylex() override;
 
     void print_current() const {
         std::cout << current_lexem << " <" << current_value << ">" << std::endl;

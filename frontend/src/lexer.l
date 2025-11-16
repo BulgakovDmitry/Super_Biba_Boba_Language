@@ -1,16 +1,17 @@
-%option yyclass="Lexer"
 %option c++
-%option nounput noinput
+%option noyywrap
+%option nounput
+%option noinput
+%option batch
 
 %{
   #include <string>
   #include <iostream>
-  // #include "parser.hpp"
-  #include "lexer.hpp"
+  #include "parser.hpp"
 
   int yylineno;
 
-  using namespace language;
+  extern yy::parser::semantic_type* yylval;
 %}
 
 WHITESPACE    [ \t\r\v]+
@@ -28,40 +29,54 @@ NEWLINE  \n
 {LINE_COMMENT}  { /* skip */ }
 {BLOCK_COMMENT} { /* skip */ }
 
-"if"            { return process_if();   }
-"else"          { return process_else(); }
-"while"         { return process_while(); }
-"print"         { return process_print(); }
-"?"             { return process_input(); }
+"if"            { return yy::parser::token::TOK_IF; }
+"else"          { return yy::parser::token::TOK_ELSE; }
+"while"         { return yy::parser::token::TOK_WHILE; }
+"print"         { return yy::parser::token::TOK_PRINT; }
+"?"             { return yy::parser::token::TOK_INPUT; }
 
-"=="            { return process_eq(); }
-"!="            { return process_not_eq(); }
-"<="            { return process_less_or_eq(); }
-">="            { return process_greater_or_eq(); }
-"="             { return process_assign(); }
+"=="            { return yy::parser::token::TOK_EQ; }
+"!="            { return yy::parser::token::TOK_NEQ; }
+"<="            { return yy::parser::token::TOK_LESS_OR_EQ; }
+">="            { return yy::parser::token::TOK_GREATER_OR_EQ; }
+"="             { return yy::parser::token::TOK_ASSIGN; }
 
-"+"             { return process_plus(); }
-"-"             { return process_minus(); }
-"*"             { return process_mul(); }
-"/"             { return process_div(); }
+"+"             { return yy::parser::token::TOK_PLUS; }
+"-"             { return yy::parser::token::TOK_MINUS; }
+"*"             { return yy::parser::token::TOK_MUL; }
+"/"             { return yy::parser::token::TOK_DIV; }
 
-"<"             { return process_less(); }
-">"             { return process_greater(); }
+"<"             { return yy::parser::token::TOK_LESS; }
+">"             { return yy::parser::token::TOK_GREATER; }
 
-"("             { return process_left_paren(); }
-")"             { return process_right_paren(); }
-"{"             { return process_left_brace(); }
-"}"             { return process_right_brace(); }
-";"             { return process_semicolon(); }
+"("             { return yy::parser::token::TOK_LEFT_PAREN; }
+")"             { return yy::parser::token::TOK_RIGHT_PAREN; }
+"{"             { return yy::parser::token::TOK_LEFT_BRACE; }
+"}"             { return yy::parser::token::TOK_RIGHT_BRACE; }
+";"             { return yy::parser::token::TOK_SEMICOLON; }
 
-{NUMBER}        { return process_number();}
+{NUMBER}        {
+  if (yylval) {
+    yylval->emplace<int>(std::stoi(yytext));
+  } else {
+    std::cerr << "ERROR: yylval is null!" << std::endl;
+  }
+  return yy::parser::token::TOK_NUMBER;
+}
 
-{ID}            { return process_id(); }
+{ID}            {
+  if (yylval) {
+    yylval->emplace<std::string>(yytext);
+  } else {
+    std::cerr << "ERROR: yylval is null!" << std::endl;
+  }
+  return yy::parser::token::TOK_ID;
+}
 
 .               {
-                    std::cerr << "Unknown token: '" << yytext << "' at line " << yylineno << std::endl;;
-                    return -1;
-                }
+  std::cerr << "Unknown token: '" << yytext << "' at line " << yylineno << std::endl;;
+  return -1;
+}
 
 <<EOF>>         { return 0; }
 

@@ -7,24 +7,19 @@
 %nonassoc PREC_IFX
 %nonassoc TOK_ELSE
 
-%lex-param   { language::Lexer* scanner }
-%parse-param { language::Lexer* scanner }
 %parse-param { std::unique_ptr<language::Program> &root }
 
 %code requires {
   #include <string>
-  namespace language { class Lexer; }
-  #include "node.hpp" 
+  #include "node.hpp"
 }
 
 %code {
-  #include "lexer.hpp"
   #include <iostream>
-  static int yylex(yy::parser::value_type*      /*yylval*/,
-                   yy::parser::location_type*   /*yylloc*/,
-                   language::Lexer*             scanner)
+  static int yylex(yy::parser::value_type*      yylval,
+                   yy::parser::location_type*   yylloc)
   {
-      return scanner->yylex();
+      return ::yylex(yylval, yylloc);
   }
   inline language::Expression_ptr make_binary(
       language::Binary_operators op,
@@ -93,7 +88,7 @@ program        : stmt_list TOK_EOF
 
 stmt_list      : /* empty */
                 {
-                  $$ = language::StmtList{};  
+                  $$ = language::StmtList{};
                 }
                | stmt_list statement
                 {
@@ -116,13 +111,13 @@ statement      : assignment_stmt TOK_SEMICOLON
                  { $$ = std::move($1); }
                ;
 
-block_stmt     : TOK_LEFT_BRACE stmt_list TOK_RIGHT_BRACE 
+block_stmt     : TOK_LEFT_BRACE stmt_list TOK_RIGHT_BRACE
                 {
                   $$ = std::make_unique<language::Block_stmt>(std::move($2));
                 }
                ;
 
-assignment_stmt: TOK_ID TOK_ASSIGN expression 
+assignment_stmt: TOK_ID TOK_ASSIGN expression
                 {
                   language::Variable_ptr var = std::make_unique<language::Variable>(std::move($1));
                   $$ = std::make_unique<language::Assignment_stmt>(std::move(var), std::move($3));
@@ -147,19 +142,19 @@ if_stmt        : TOK_IF TOK_LEFT_PAREN expression TOK_RIGHT_PAREN statement %pre
                 }
                ;
 
-while_stmt     : TOK_WHILE TOK_LEFT_PAREN expression TOK_RIGHT_PAREN statement 
+while_stmt     : TOK_WHILE TOK_LEFT_PAREN expression TOK_RIGHT_PAREN statement
                 {
                   $$ = std::make_unique<language::While_stmt>(std::move($3), std::move($5));
                 }
                ;
 
-print_stmt     : TOK_PRINT expression 
+print_stmt     : TOK_PRINT expression
                 {
                   $$ = std::make_unique<language::Print_stmt>(std::move($2));
                 }
                ;
 
-expression     : equality 
+expression     : equality
                   { $$ = std::move($1); }
                ;
 
@@ -168,7 +163,7 @@ equality       : relational
                | equality TOK_EQ  relational
                  { $$ = make_binary(language::Binary_operators::Eq,  std::move($1), std::move($3)); }
                | equality TOK_NEQ relational
-                 { $$ = make_binary(language::Binary_operators::Eq,  std::move($1), std::move($3)); }
+                 { $$ = make_binary(language::Binary_operators::Neq,  std::move($1), std::move($3)); }
                ;
 
 relational     : add_sub

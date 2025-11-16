@@ -57,8 +57,6 @@ enum class Unary_operators { Neg, Plus };
 
 class Statement : public Node {};
 class Expression : public Node {};
-class LValueExpr : public Expression {};
-class RValueExpr : public Expression {};
 
 using Statement_ptr = std::unique_ptr<Statement>;
 using StmtList = std::vector<Statement_ptr>;
@@ -134,7 +132,7 @@ class If_stmt : public Statement {
         : condition_(std::move(condition)), then_branch_(std::move(then_branch)),
           else_branch_(std::move(else_branch)) {}
 
-    Expression &condition() { return *condition_; }
+    Expression &get_condition() { return *condition_; }
     Statement &then_branch() { return *then_branch_; }
     Statement *else_branch() { return else_branch_.get(); }
     const Statement *else_branch() const { return else_branch_.get(); }
@@ -167,7 +165,7 @@ class Print_stmt : public Statement {
     void accept(ASTVisitor &visitor) override { visitor.visit(*this); }
 };
 
-class Binary_operator : public RValueExpr {
+class Binary_operator : public Expression {
   private:
     Binary_operators op_;
     Expression_ptr left_;
@@ -186,7 +184,7 @@ class Binary_operator : public RValueExpr {
     void accept(ASTVisitor &visitor) override { visitor.visit(*this); }
 };
 
-class Unary_operator : public RValueExpr {
+class Unary_operator : public Expression {
   private:
     Unary_operators op_;
     Expression_ptr operand_;
@@ -202,12 +200,14 @@ class Unary_operator : public RValueExpr {
     void accept(ASTVisitor &visitor) override { visitor.visit(*this); }
 };
 
-class Number : public RValueExpr {
+class Number : public Expression {
   private:
     number_t number_;
 
   public:
     explicit Number(number_t number) : number_(number) {}
+    number_t &get_value() { return number_; }
+    const number_t &get_value() const { return number_; }
 
     void accept(ASTVisitor &visitor) override { visitor.visit(*this); }
 };
@@ -218,6 +218,9 @@ class Variable : public Expression {
 
   public:
     explicit Variable(std::string var_name) : var_name_(std::move(var_name)) {}
+
+    std::string &get_name() { return var_name_; }
+    const std::string &get_name() const { return var_name_; }
 
     void accept(ASTVisitor &visitor) override { visitor.visit(*this); }
 };

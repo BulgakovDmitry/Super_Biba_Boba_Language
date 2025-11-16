@@ -8,28 +8,31 @@
 namespace language {
 
 class Simulator final : public ASTVisitor {
-  private:
-    std::unordered_map<std::string, number_t> nametable;
-
   public:
+    std::unordered_map<std::string, number_t> nametable;
     Simulator() = default;
-    bool simulate_run_program(Program &program) {
-        for (auto &statement : program.statements) {
-            if ()
-        }
+    ~Simulator() = default;
 
-        return true;
-    }
+    void visit(Program &node) override;
+    void visit(Block_stmt &node) override;
 
-  private:
-    void visit(Program &node) override {
+    void visit(Assignment_stmt &node) override;
 
-    };
-    void visit(Assignment &node) override;
-    void visit(BinaryOp &node) override;
-    void visit(UnaryOp &node) override;
+    void visit(Input_stmt &node) override;
+
+    void visit(If_stmt &node) override;
+
+    void visit(While_stmt &node) override;
+
+    void visit(Print_stmt &node) override;
+
+    void visit(Binary_operator &node) override;
+    void visit(Unary_operator &node) override;
     void visit(Number &node) override;
     void visit(Variable &node) override;
+
+    private:
+    number_t evaluate_expression(Expression& expression);
 };
 
 } // namespace language

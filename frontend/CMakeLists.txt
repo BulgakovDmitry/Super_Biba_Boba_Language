@@ -20,9 +20,12 @@ FLEX_TARGET(Lexer
     ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
 )
 
+ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
 
 add_executable(frontend
     src/main.cpp
+    src/expr_evaluator.cpp
+    src/simulator.cpp
     ${FLEX_Lexer_OUTPUTS}
     ${BISON_Parser_OUTPUTS}
 )
