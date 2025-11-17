@@ -16,7 +16,7 @@ void Simulator::visit(Program &node) {
 }
 
 void Simulator::visit(Block_stmt &node) {
-    std::cout << "Run block\n";
+    //std::cout << "Run block\n";
 
     const auto &statements = node.get_stmts();
 
@@ -26,22 +26,22 @@ void Simulator::visit(Block_stmt &node) {
 };
 
 void Simulator::visit(Assignment_stmt &node) {
-    std::cout << "Run assignment\n";
+    //std::cout << "Run assignment\n";
     const auto &var_name = node.get_variable()->get_name();
     const auto &value = evaluate_expression(node.get_value());
 
     auto it = nametable.find(var_name);
     if (it != nametable.end()) {
         it->second = value;
-        std::cout << "variable " << var_name << " exsists in nametable, new value " << it->second << '\n';
+        //std::cout << "variable " << var_name << " exsists in nametable, new value " << it->second << '\n';
     } else {
         nametable.emplace (var_name, value);
-        std::cout << "Variable " << var_name << " created with value " << value << '\n';
+        //std::cout << "Variable " << var_name << " created with value " << value << '\n';
     }
 };
 
 void Simulator::visit(Input_stmt &node) {
-    std::cout << "Run input\n";
+    //std::cout << "Run input\n";
 
     const auto &var_name = node.get_variable()->get_name();
     number_t value;
@@ -50,15 +50,15 @@ void Simulator::visit(Input_stmt &node) {
     auto it = nametable.find(var_name);
     if (it != nametable.end()) {
         it->second = value;
-        std::cout << "variable " << var_name << " exsists in nametable, new value " << it->second << '\n';
+        //std::cout << "variable " << var_name << " exsists in nametable, new value " << it->second << '\n';
     } else {
         nametable.emplace (var_name, value);
-        std::cout << "Variable " << var_name << " created with value " << value << '\n';
+        //std::cout << "Variable " << var_name << " created with value " << value << '\n';
     }
 };
 
 void Simulator::visit(If_stmt &node) {
-    std::cout << "Run if\n";
+    //std::cout << "Run if\n";
 
     auto condition = evaluate_expression(node.get_condition());
 
@@ -70,7 +70,7 @@ void Simulator::visit(If_stmt &node) {
 };
 
 void Simulator::visit(While_stmt &node) {
-    std::cout << "Run while\n";
+    //std::cout << "Run while\n";
 
     while (evaluate_expression(node.get_condition())) {
         node.get_body().accept(*this);
@@ -78,7 +78,7 @@ void Simulator::visit(While_stmt &node) {
 };
 
 void Simulator::visit(Print_stmt &node) {
-    std::cout << "Run print\n";
+    //std::cout << "Run print\n";
 
     auto value = evaluate_expression(node.get_value());
 

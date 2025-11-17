@@ -1,3 +1,4 @@
+#include "lexer.hpp"
 #include "node.hpp"
 #include "parser.hpp"
 #include "simulator.hpp"
@@ -7,6 +8,8 @@
 
 extern int yylex();
 yy::parser::semantic_type* yylval = nullptr;
+
+int yyFlexLexer::yywrap() { return 1; }
 
 int main(int argc, char* argv[]) {
     std::cout << "Run program\n";
@@ -21,13 +24,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    language::Lexer scanner(&program_file, &std::cout);
+
     std::unique_ptr<language::Program> root;
 
-    std::cout << "Start parse\n";
-    yy::parser parser{root};
+    yy::parser parser(&scanner, root);
 
     int result = parser.parse();
-    program_file.close();
 
     if (result == 0 && root) {
         std::cout << "Parse OK\n";

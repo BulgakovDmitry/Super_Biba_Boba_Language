@@ -7,19 +7,33 @@
 %nonassoc PREC_IFX
 %nonassoc TOK_ELSE
 
+%lex-param   { language::Lexer* scanner }
+%parse-param { language::Lexer* scanner }
 %parse-param { std::unique_ptr<language::Program> &root }
 
 %code requires {
   #include <string>
+  #include <iostream>
+  namespace language { class Lexer; }
   #include "node.hpp"
 }
 
 %code {
+  #include "lexer.hpp"
   #include <iostream>
-  static int yylex(yy::parser::value_type*      yylval,
-                   yy::parser::location_type*   yylloc)
+  static int yylex(yy::parser::semantic_type* yylval,
+                   yy::parser::location_type*   yylloc,
+                   language::Lexer*             scanner)
   {
-      return ::yylex(yylval, yylloc);
+      auto tt = scanner->yylex();
+
+      if (tt == yy::parser::token::TOK_NUMBER)
+        yylval->build<int>() = std::stoi(scanner->YYText());
+
+      if (tt == yy::parser::token::TOK_ID)
+        yylval->build<std::string>() = scanner->YYText();
+
+      return tt;
   }
   inline language::Expression_ptr make_binary(
       language::Binary_operators op,
@@ -163,7 +177,7 @@ equality       : relational
                | equality TOK_EQ  relational
                  { $$ = make_binary(language::Binary_operators::Eq,  std::move($1), std::move($3)); }
                | equality TOK_NEQ relational
-                 { $$ = make_binary(language::Binary_operators::Neq,  std::move($1), std::move($3)); }
+                 { $$ = make_binary(language::Binary_operators::Eq,  std::move($1), std::move($3)); }
                ;
 
 relational     : add_sub
