@@ -22,7 +22,6 @@ void Program::graph_dump(std::ostream &gv, Node *parent) const {
     }
     gv << " } }\"" << "];\n";
 
-
     for (const auto &stmt : stmts_) {
         if (stmt) {
             gv << "    node_" << this << " -> node_" << stmt.get() << ";\n";
@@ -51,7 +50,6 @@ void Block_stmt::graph_dump(std::ostream &gv, Node *parent) const {
         }
     }
     gv << " } }\"" << "];\n";
-
 
     for (const auto &stmt : stmts_) {
         if (stmt) {

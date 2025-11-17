@@ -74,7 +74,6 @@ void Simulator::visit(If_stmt &node) {
         node.else_branch().accept(*this);
     }
     // std::cout << "step 10\n";
-
 };
 
 void Simulator::visit(While_stmt &node) {
