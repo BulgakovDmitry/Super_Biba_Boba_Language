@@ -71,7 +71,7 @@ void Simulator::visit(If_stmt &node) {
         node.then_branch().accept(*this);
     } else {
         // std::cout << "step 3\n";
-        const bool contains_else_node = node.contains_else_branch(); 
+        const bool contains_else_node = node.contains_else_branch();
 
         if (contains_else_node)
             node.else_branch().accept(*this);
