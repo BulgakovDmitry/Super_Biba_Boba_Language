@@ -166,6 +166,15 @@ int yylex(yy::parser::semantic_type*   yylval,
 Во время синтаксического анализа строится `AST` (abstract-syntax-tree). 
 При помощи введения новых правил для синтаксического анализа реализована иерархия порядка исполнения.
 
+Также это дерево можно посмотреть в графическом представлении при помощи graphviz. Для компиляции изображения необходимо ввести
+```bash
+dot graph_dump/graph_dump.gv -Tsvg -o graph_dump/graph_dump.svg
+```
+и мы получим следующее представление дерева (пример)
+<div align="center">
+  <img src="docs/graph_dump.svg" alt="Dump Banner" width="500">
+</div>
+
 ### Симулятор
 Чтобы симулировать выполнение программы, реализован класс `Simulator` [simulator.hpp](https://github.com/RTCupid/Super_Biba_Boba_Language/blob/main/frontend/include/simulator.hpp), наследующийся от абстрактного класса ASTVisitor:
 
