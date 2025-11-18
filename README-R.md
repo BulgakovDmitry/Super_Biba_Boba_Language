@@ -172,7 +172,7 @@ dot graph_dump/graph_dump.gv -Tsvg -o graph_dump/graph_dump.svg
 ```
 и мы получим следующее представление дерева (пример)
 <div align="center">
-  <img src="docs/graph_dump.svg" alt="Dump Banner" width="500">
+  <img src="img/graph_dump.svg" alt="Dump Banner" width="1200">
 </div>
 
 ### Симулятор
