@@ -160,7 +160,7 @@ void Binary_operator::graph_dump(std::ostream &gv, Node *parent) const {
     }
 
     gv << "    node_" << this << "[shape=Mrecord; style=filled; fillcolor=lightsteelblue1"
-       << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Binary op"
+       << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Binary operator"
        << " | addr: " << this << " | parent: " << parent << " | operator: " << op_str
        << " | { left: " << left_.get() << " | right: " << right_.get() << " } }\"" << "];\n";
 
@@ -186,7 +186,7 @@ void Unary_operator::graph_dump(std::ostream &gv, Node *parent) const {
     }
 
     gv << "    node_" << this << "[shape=Mrecord; style=filled; fillcolor=lightsteelblue1"
-       << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Unary op"
+       << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Unary operator"
        << " | addr: " << this << " | parent: " << parent << "operator: " << op_str
        << "| operand: " << operand_.get() << " }\"" << "];\n";
 
