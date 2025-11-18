@@ -22,6 +22,21 @@ FLEX_TARGET(Lexer
 
 ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
 
+find_path(FLEX_INCLUDE_DIR FlexLexer.h
+    PATHS
+        /usr/include/flex
+        /usr/include
+        /usr/local/include/flex
+        /usr/local/include
+        /opt/local/include/flex
+        /opt/local/include
+    NO_DEFAULT_PATH
+)
+
+if(NOT FLEX_INCLUDE_DIR)
+    find_path(FLEX_INCLUDE_DIR FlexLexer.h)
+endif()
+
 add_executable(frontend
     src/main.cpp
     src/expr_evaluator.cpp
@@ -36,3 +51,6 @@ target_include_directories(frontend PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+if(FLEX_INCLUDE_DIR)
+    target_include_directories(frontend PRIVATE ${FLEX_INCLUDE_DIR})
+endif()
