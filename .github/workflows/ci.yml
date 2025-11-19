@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential libgtest-dev flex bison
+          sudo apt-get install -y cmake build-essential libgtest-dev flex bison libfl-dev
           sudo cmake -S /usr/src/googletest -B /usr/src/googletest/build
           sudo cmake --build /usr/src/googletest/build --config Release
           sudo cmake --install /usr/src/googletest/build
