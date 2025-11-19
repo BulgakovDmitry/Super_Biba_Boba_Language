@@ -1,15 +1,14 @@
+#include "dump_path_gen.hpp"
 #include "lexer.hpp"
 #include "node.hpp"
 #include "parser.hpp"
 #include "simulator.hpp"
-#include "dump_path_gen.hpp"
 #include <fstream>
 #include <iostream>
 #include <memory>
 
 extern int yylex();
 yy::parser::semantic_type *yylval = nullptr;
-
 
 int yyFlexLexer::yywrap() { return 1; }
 
@@ -49,7 +48,7 @@ int main(int argc, char *argv[]) {
     }
 
     const auto paths = language::make_dump_paths();
-    const std::string gv_file = paths.gv.string();  
+    const std::string gv_file = paths.gv.string();
     const std::string svg_file = paths.svg.string();
     // dot dump/graph_dump.gv -Tsvg -o dump/graph_dump.svg
 
