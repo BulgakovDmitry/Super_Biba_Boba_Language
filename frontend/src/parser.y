@@ -60,6 +60,7 @@
 %token TOK_MINUS         "-"
 %token TOK_MUL           "*"
 %token TOK_DIV           "/"
+%token TOK_REM_DIV       "%"
 
 /* --- Assignment --- */
 %token TOK_ASSIGN        "="
@@ -208,6 +209,8 @@ mul_div        : unary
                  { $$ = make_binary(language::Binary_operators::Mul, std::move($1), std::move($3)); }
                | mul_div TOK_DIV unary
                  { $$ = make_binary(language::Binary_operators::Div, std::move($1), std::move($3)); }
+               | mul_div TOK_REM_DIV unary
+                 { $$ = make_binary(language::Binary_operators::RemDiv, std::move($1), std::move($3)); }
                ;
 
 unary          : TOK_MINUS unary

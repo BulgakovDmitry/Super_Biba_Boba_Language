@@ -70,6 +70,10 @@ void ExpressionEvaluator::visit(Binary_operator &node) {
         result_ = left_value / right_value;
         break;
     }
+    case Binary_operators::RemDiv: {
+        result_ = left_value % right_value;
+        break;
+    }
     default:
         throw std::runtime_error("Unknown binary operator");
     }

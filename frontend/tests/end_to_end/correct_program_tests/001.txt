@@ -1,5 +1,2 @@
-print 2+2*2;
-print (2+2)*2;
-print 2 + -2 * -2;
-print 2 * -2 + 2;
-print 2 * (-2 + 2);
+val = 10 % 3;
+print val;

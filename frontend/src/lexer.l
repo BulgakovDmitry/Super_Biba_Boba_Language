@@ -46,6 +46,7 @@ NEWLINE  \n
 "-"             { return process_minus(); }
 "*"             { return process_mul(); }
 "/"             { return process_div(); }
+"%"             { return process_rem_div(); }
 
 "<"             { return process_less(); }
 ">"             { return process_greater(); }

@@ -152,6 +152,9 @@ void Binary_operator::graph_dump(std::ostream &gv, Node *parent) const {
     case Binary_operators::Div:
         op_str = "/";
         break;
+    case Binary_operators::RemDiv:
+        op_str = "%";
+        break;
     }
 
     gv << "    node_" << this << "[shape=Mrecord; style=filled; fillcolor=lightsteelblue1"
