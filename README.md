@@ -9,6 +9,8 @@
 
 - This project is an implementation of the `ParaCL` programming language from the C++ course by K.I. Vladimirov.
 
+- Check the [Contribution Guidelines](contribution_guidelines.md)
+
 ## 📖 Introduction
 Designing your own programming language is a fundamental task in computer science that enables hands-on exploration of computation principles. Creating a language with C-like syntax helps to better understand compiler architecture. This process reveals the internal logic of translating high-level constructs into intermediate representations.
 
