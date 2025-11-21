@@ -170,7 +170,7 @@ By introducing additional rules for syntax analysis, the hierarchy of operator p
 
 The tree can also be visualized using graphviz. To build the image, run:
 ```bash
-dot graph_dump/graph_dump.gv -Tsvg -o graph_dump/graph_dump.svg
+dot dump/graph_dump.gv -Tsvg -o dump/graph_dump.svg
 ```
 and you will get a graphical representation of the tree (example):
 <div align="center">
