@@ -9,6 +9,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
+add_library(frontend_headers INTERFACE)
+target_include_directories(frontend_headers
+    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+add_library(frontend::headers ALIAS frontend_headers)
+
+set(SOURCES
+    ${CMAKE_SOURCE_DIR}/src/main.cpp
+)
+
 BISON_TARGET(Parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.y
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
@@ -31,8 +42,14 @@ add_executable(frontend
     ${BISON_Parser_OUTPUTS}
 )
 
+# target_link_libraries(frontend
+#     PRIVATE
+#         ${FLEX_LIBRARIES}
+# )
+
 target_include_directories(frontend PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+add_subdirectory(tests)

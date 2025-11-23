@@ -16,5 +16,4 @@ add_test(
 )
 
 enable_testing()
-
 add_subdirectory(frontend)
