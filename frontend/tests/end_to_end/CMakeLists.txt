@@ -4,6 +4,6 @@ add_test(
 )
 
 set_tests_properties(end_to_end PROPERTIES 
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
     LABELS "end_to_end"
 )
