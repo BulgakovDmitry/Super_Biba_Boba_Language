@@ -6,16 +6,16 @@ set(SRC_LIST
     src/process.cpp
     src/get_line_and_column.cpp
     ${FLEX_Lexer_OUTPUTS}
-    #${BISON_Parser_OUTPUTS}
 )
 
 set_source_files_properties(
     ${FLEX_Lexer_OUTPUTS}
-    ${BISON_Parser_OUTPUTS}
     PROPERTIES GENERATED TRUE
 )
 
 add_executable(lexer ${SRC_LIST})
+
+add_dependencies(lexer generate_parser)
 
 target_link_libraries(lexer
     PRIVATE 

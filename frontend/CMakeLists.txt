@@ -33,6 +33,10 @@ FLEX_TARGET(Lexer
 
 ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
 
+add_custom_target(generate_parser
+    DEPENDS ${BISON_Parser_OUTPUTS}
+)
+
 add_executable(frontend
     src/main.cpp
     src/expr_evaluator.cpp
