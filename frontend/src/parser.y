@@ -28,7 +28,7 @@
   {
       int line_before = scanner->get_line();
       int column_before = scanner->get_column();
-      
+
       auto tt = scanner->yylex();
 
       yylloc->begin.line = line_before;
@@ -101,8 +101,8 @@
 
 %type <language::StmtList>             stmt_list
 %type <language::Statement_ptr>        statement
-%type <language::Statement_ptr>        assignment_stmt input_stmt if_stmt while_stmt print_stmt block_stmt
-%type <language::Expression_ptr>       expression equality relational add_sub mul_div unary primary assignment_expr
+%type <language::Statement_ptr>        assignment_stmt if_stmt while_stmt print_stmt block_stmt empty_stmt
+%type <language::Expression_ptr>       expression input equality relational add_sub mul_div unary primary assignment_expr
 
 %start program
 
@@ -127,8 +127,6 @@ stmt_list      : /* empty */
 
 statement      : assignment_stmt TOK_SEMICOLON
                  { $$ = std::move($1); }
-               | input_stmt TOK_SEMICOLON
-                 { $$ = std::move($1); }
                | if_stmt
                  { $$ = std::move($1); }
                | while_stmt
@@ -137,7 +135,14 @@ statement      : assignment_stmt TOK_SEMICOLON
                  { $$ = std::move($1); }
                | block_stmt
                  { $$ = std::move($1); }
+               | empty_stmt
+                 { $$ = std::move($1); }
                ;
+
+empty_stmt     : TOK_SEMICOLON
+                {
+                  $$ = std::make_unique<language::Empty_stmt>();
+                }
 
 block_stmt     : TOK_LEFT_BRACE stmt_list TOK_RIGHT_BRACE
                 {
@@ -151,14 +156,6 @@ assignment_stmt: TOK_ID TOK_ASSIGN expression
                   $$ = std::make_unique<language::Assignment_stmt>(std::move(var), std::move($3));
                 }
                 ;
-
-input_stmt     : TOK_ID TOK_ASSIGN TOK_INPUT
-                {
-                  language::Variable_ptr var = std::make_unique<language::Variable>(std::move($1));
-
-                  $$ = std::make_unique<language::Input_stmt>(std::move(var));
-                }
-               ;
 
 if_stmt        : TOK_IF TOK_LEFT_PAREN expression TOK_RIGHT_PAREN statement %prec PREC_IFX
                 {
@@ -184,10 +181,12 @@ print_stmt     : TOK_PRINT expression
 
 expression     : equality
                   { $$ = std::move($1); }
+                | assignment_expr
+                  { $$ = std::move($1); }
                ;
 
 equality       : relational
-                  { $$ = std::move($1); }
+                 { $$ = std::move($1); }
                | equality TOK_EQ  relational
                  { $$ = make_binary(language::Binary_operators::Eq,  std::move($1), std::move($3)); }
                | equality TOK_NEQ relational
@@ -241,17 +240,23 @@ unary          : TOK_MINUS unary
 primary        : TOK_NUMBER
                 { $$ = std::make_unique<language::Number>($1); }
                | TOK_ID
-                 { $$ = std::make_unique<language::Variable>(std::move($1)); }
+                { $$ = std::make_unique<language::Variable>(std::move($1)); }
                | TOK_LEFT_PAREN expression TOK_RIGHT_PAREN
                 { $$ = std::move($2); }
-               | assignment_expr
+               | input
                 { $$ = std::move($1); }
                ;
 
-assignment_expr: TOK_LEFT_PAREN TOK_ID TOK_ASSIGN expression TOK_RIGHT_PAREN
+input          : TOK_INPUT
                 {
-                  language::Variable_ptr var = std::make_unique<language::Variable>(std::move($2));
-                  $$ = std::make_unique<language::Assignment_expr>(std::move(var), std::move($4));
+                  $$ = std::make_unique<language::Input>();
+                }
+               ;
+
+assignment_expr: TOK_ID TOK_ASSIGN expression
+                {
+                  language::Variable_ptr var = std::make_unique<language::Variable>(std::move($1));
+                  $$ = std::make_unique<language::Assignment_expr>(std::move(var), std::move($3));
                 }
                ;
 %%

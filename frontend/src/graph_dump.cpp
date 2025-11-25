@@ -54,6 +54,12 @@ void Block_stmt::graph_dump(std::ostream &gv, Node *parent) const {
     }
 }
 
+void Empty_stmt::graph_dump(std::ostream &gv, Node *parent) const {
+    gv << "    node_" << this << "[shape=Mrecord; style=filled; fillcolor=lavenderblush1"
+       << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Empty"
+       << " | addr: " << this << " | parent: " << parent << "}\"" << "];\n";
+}
+
 void Assignment_stmt::graph_dump(std::ostream &gv, Node *parent) const {
     gv << "    node_" << this << "[shape=Mrecord; style=filled; fillcolor=plum"
        << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Assignment"
@@ -72,7 +78,7 @@ void Assignment_stmt::graph_dump(std::ostream &gv, Node *parent) const {
 
 void Assignment_expr::graph_dump(std::ostream &gv, Node *parent) const {
     gv << "    node_" << this << "[shape=Mrecord; style=filled; fillcolor=plum"
-       << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Assignment"
+       << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Assignment expr"
        << " | addr: " << this << " | parent: " << parent << "| { left: " << variable_.get()
        << " | right: " << value_.get() << " } }\"" << "];\n";
 
@@ -123,16 +129,10 @@ void If_stmt::graph_dump(std::ostream &gv, Node *parent) const {
     }
 }
 
-void Input_stmt::graph_dump(std::ostream &gv, Node *parent) const {
+void Input::graph_dump(std::ostream &gv, Node *parent) const {
     gv << "    node_" << this << "[shape=Mrecord; style=filled; fillcolor=lavenderblush1"
        << "; color=\"#000000\"; " << "fontcolor=\"#000000\"; " << "label=\"{ Input"
-       << " | addr: " << this << " | parent: " << parent
-       << "| variable: " << variable_.get()->get_name() << "}\"" << "];\n";
-
-    if (variable_) {
-        gv << "    node_" << this << " -> node_" << variable_.get() << ";\n";
-        variable_->graph_dump(gv, (Node *)this);
-    }
+       << " | addr: " << this << " | parent: " << parent << "}\"" << "];\n";
 }
 
 void Binary_operator::graph_dump(std::ostream &gv, Node *parent) const {
